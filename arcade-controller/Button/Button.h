@@ -4,10 +4,10 @@
 class Button {
   public:
     void init(char _pin, char _key);
-    void test();
+    void set(char _key);
     bool update();
     bool get();
-    char key;
+    unsigned char key;
   private:
     char pin;
     bool state;
@@ -34,5 +34,9 @@ bool Button::update() {
 
 bool Button::get() {
   return state;
+}
+
+void Button::set(char _key) {
+  key = _key;
 }
 #endif
