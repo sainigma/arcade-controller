@@ -14,6 +14,6 @@ kbinder = keybinder('Arduino Leonardo')
 
 binding = kbinder.getBinding()
 
-gui = GUI(glue)
+gui = GUI(glue, kbinder.port)
 gui.setBinding(binding)
 gui.start()
