@@ -7,7 +7,6 @@ with open("json/tkmap.json") as jsonFile:
   tkKeymap = json.load(jsonFile)
 
 def glue(bind, index):
-  print("moi!",bind,buttonMap[index])
   binding[buttonMap[index]] = bind
   kbinder.setBinding(binding, tkKeymap)
 
