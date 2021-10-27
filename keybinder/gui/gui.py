@@ -3,10 +3,10 @@ from tkinter import *
 from functools import partial
 #requires tk
 
-UPDATE_MS = int(1000/5)
+UPDATE_MS = int(1000/6)
 
-buttonLabels = ["BUTTON1", "BUTTON2", "BUTTON3", "BUTTON4", "BUTTON5", "BUTTON6", "RIGHT", "UP", "DOWN", "LEFT"]
-buttonPlaces = [(376,248), (430,208), (499,210), (564,218), (190,259), (618,355), (418,87), (348,21), (210,133), (200,46)]
+buttonLabels = ["BUTTON1", "BUTTON2", "BUTTON3", "BUTTON4", "BUTTON5", "BUTTON6", "RIGHT",    "UP",     "DOWN",   "LEFT"]
+buttonPlaces = [(376,248), (430,208), (499,210), (564,218), (180,259), (618,355), (418,115), (348,21), (205,170), (190,66)]
 
 #Maps tk keys to Keyboard.h designations
 with open("json/tkmap.json") as jsonFile:
@@ -45,11 +45,12 @@ class FunkyButton:
 
   def update(self):
     self.canvas.delete("all")
-    self.canvas.create_image(0,0,image=self.buttonbg.getFrame(), anchor="nw")
+    if self.buttonbg != None:
+      self.canvas.create_image(0,0,image=self.buttonbg.getFrame(), anchor="nw")
     self.canvas.create_image(-self.crop[0] * self.size[0] - 2, -self.crop[1] * self.size[1], image=self.bitmapFont.getFrame(), anchor="nw")
 
 class GUI:
-  def __init__(self, glue):
+  def __init__(self, glue, port):
     self.glue = glue
     self.root = Tk()
     self.buttons2 = {}
@@ -57,17 +58,22 @@ class GUI:
     
     self.backgroundAnimation = Animation('graphics/', 'background', 'png', 2)
     self.buttonbg = Animation("graphics/", "button", "png", 2)
-    self.bitmapFont = Animation("graphics/", "font", "png", 1)
+    self.bitmapFont = Animation("graphics/", "font", "png", 2)
 
     self.background = Canvas(master=self.root, width=800, height=600, cursor="arrow", relief='ridge')
     self.background.pack(fill = "both", expand = True)
     self.setBackground(self.backgroundAnimation.getFrame())
     self.addRebindButtons()
+    comport = port.split('COM')[1]
+    self.port = FunkyButton(self.root, (32,32), (160,550), None, self.bitmapFont, None)
+    self.port.crop = self.getFontCrop(comport)
+    self.port.canvas['cursor'] = ''
+    self.port.update()
 
   def getFontCrop(self, key):
     index = 0
     if len(key) == 1:
-      index = ord(key.capitalize())
+      index = ord(key)
     elif key in keymap:
       index = int(keymap[key])
     row = int(index / 16)
@@ -138,6 +144,8 @@ class GUI:
     frame = frame + 1
     self.backgroundAnimation.update()
     self.buttonbg.update()
+    self.bitmapFont.update()
+    self.port.update()
     self.setBackground(self.backgroundAnimation.getFrame())
     for button in self.buttons2:
       self.buttons2[button].update()
